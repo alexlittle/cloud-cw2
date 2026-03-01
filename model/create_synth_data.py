@@ -9,17 +9,17 @@ classes = {
         "protocol": 17,  # UDP
         "src_port": lambda: np.random.randint(1024, 65535),
         "dst_port": 53,
-        "bidirectional_packets": lambda: np.random.randint(2, 10),
-        "bidirectional_bytes": lambda: np.random.randint(50, 500),
-        "duration_ms": lambda: np.random.randint(10, 100),
+        "bidirectional_packets": lambda: int(np.random.uniform(2, 10)),
+        "bidirectional_bytes": lambda: int(np.random.uniform(50, 500)),
+        "duration_ms": lambda: int(np.random.uniform(10, 100)),
         "application_name": "DNS",
     },
     "VoIP": {
         "protocol": 17,  # UDP
         "src_port": lambda: np.random.randint(1024, 65535),
         "dst_port": lambda: random.choice([5060, 5061, 16384, 32768]),
-        "bidirectional_packets": lambda: np.random.randint(50, 500),
-        "bidirectional_bytes": lambda: np.random.randint(1000, 50000),
+        "bidirectional_packets": lambda: int(np.random.uniform(50, 500)),
+        "bidirectional_bytes": lambda: int(np.random.uniform(1000, 50000)),
         "duration_ms": lambda: np.random.randint(1000, 30000),
         "application_name": "VoIP",
     },
@@ -27,8 +27,8 @@ classes = {
         "protocol": 6,  # TCP
         "src_port": lambda: np.random.randint(1024, 65535),
         "dst_port": lambda: random.choice([80, 8080, 443]),
-        "bidirectional_packets": lambda: np.random.randint(50, 5000),
-        "bidirectional_bytes": lambda: np.random.randint(1000, 10000000),
+        "bidirectional_packets": lambda: int(np.random.uniform(50, 5000)),
+        "bidirectional_bytes": lambda: int(np.random.uniform(1000, 10000000)),
         "duration_ms": lambda: np.random.randint(100, 10000),
         "application_name": "HTTP",
     },
@@ -36,8 +36,8 @@ classes = {
         "protocol": lambda: random.choice([6, 17]),  # TCP or UDP
         "src_port": lambda: np.random.randint(1024, 65535),
         "dst_port": lambda: random.choice([4444, 8080, 22, 80, 443, 3389]),
-        "bidirectional_packets": lambda: np.random.randint(100, 10000),
-        "bidirectional_bytes": lambda: np.random.randint(5000, 5000000),
+        "bidirectional_packets": lambda: int(np.random.uniform(100, 10000)),
+        "bidirectional_bytes": lambda: int(np.random.uniform(5000, 5000000)),
         "duration_ms": lambda: np.random.randint(50, 5000),
         "application_name": "Malicious",
     },
@@ -45,8 +45,8 @@ classes = {
         "protocol": 6,  # TCP
         "src_port": lambda: np.random.randint(1024, 65535),
         "dst_port": 22,
-        "bidirectional_packets": lambda: np.random.randint(100, 5000),
-        "bidirectional_bytes": lambda: np.random.randint(5000, 500000),
+        "bidirectional_packets": lambda: int(np.random.uniform(100, 5000)),
+        "bidirectional_bytes": lambda: int(np.random.uniform(5000, 500000)),
         "duration_ms": lambda: np.random.randint(1000, 60000),
         "application_name": "SSH",
     },
@@ -54,8 +54,8 @@ classes = {
         "protocol": 6,  # TCP
         "src_port": lambda: np.random.randint(1024, 65535),
         "dst_port": lambda: random.choice([20, 21]),
-        "bidirectional_packets": lambda: np.random.randint(100, 2000),
-        "bidirectional_bytes": lambda: np.random.randint(10000, 1000000),
+        "bidirectional_packets": lambda: int(np.random.uniform(100, 2000)),
+        "bidirectional_bytes": lambda: int(np.random.uniform(10000, 1000000)),
         "duration_ms": lambda: np.random.randint(500, 30000),
         "application_name": "FTP",
     },
@@ -78,8 +78,8 @@ data = []
 class_distribution = {
     "DNS": 0.2,
     "VoIP": 0.2,
-    "HTTP": 0.25,
-    "Malicious": 0.15,
+    "HTTP": 0.35,
+    "Malicious": 0.05,
     "SSH": 0.1,
     "FTP": 0.1,
 }

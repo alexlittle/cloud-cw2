@@ -1,23 +1,27 @@
-import joblib
-
+import numpy as np
+import onnxruntime as ort
 from nfstream import NFStreamer
 
+sess = ort.InferenceSession("./rf_model.onnx")
 streamer = NFStreamer(source="eth0", idle_timeout=1, active_timeout=5)
 
 def extract_features(flow):
-    return {
-        "src_port": flow.src_port,
-        "dst_port": flow.dst_port,
-        "protocol": flow.protocol,
-        "bidirectional_packets": flow.bidirectional_packets,
-        "bidirectional_bytes": flow.bidirectional_bytes,
-        "bidirectional_duration_ms": flow.bidirectional_duration_ms,
-    }
+    return np.array([
+    [
+        flow.src_port,
+        flow.dst_port,
+        flow.protocol,
+        flow.bidirectional_packets,
+        flow.bidirectional_bytes,
+        flow.bidirectional_duration_ms,
+    ]
+    ], dtype = np.float32)
 
-rf_model = joblib.load("rf_model.pkl")
 
 for flow in streamer:
     features = extract_features(flow)
-    prediction = rf_model.predict(features)
-    print("Making prediction...")
-    print(prediction)
+    input_name = sess.get_inputs()[0].name
+    output_name = sess.get_outputs()[0].name
+    prediction = sess.run([output_name], {input_name: features})
+
+    print("Prediction:", prediction[0][0])
