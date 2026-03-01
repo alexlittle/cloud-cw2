@@ -6,8 +6,8 @@ metadata:
 spec:
   containers:
   - name: nfstream
-    image: alextlittle/nfstream-ml-app:v1
-    imagePullPolicy: Always
+    image: alextlittle/nfstream-ml-app:v2
+    imagePullPolicy: Never
     env:
     - name: PYTHONUNBUFFERED
       value: "1"

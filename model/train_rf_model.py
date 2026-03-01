@@ -1,14 +1,14 @@
 import pandas as pd
 import numpy as np
+import joblib
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score, classification_report, confusion_matrix
-import joblib
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
 
 
 df = pd.read_csv('synth_traffic.csv')
-
-
 
 X = df[["src_port",
         "dst_port",
@@ -45,4 +45,14 @@ print("Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred, labels=np.sort(np.unique(y))))
 
 
-joblib.dump(rf, "../nfstream/rf_model.pkl", compress=3)
+joblib.dump(rf, "./rf_model.pkl", compress=3)
+
+rf_model = joblib.load("./rf_model.pkl")
+
+initial_type = [('float_input', FloatTensorType([None, 6]))]
+
+onnx_model = convert_sklearn(rf_model, initial_types=initial_type)
+
+with open("../nfstream/rf_model.onnx", "wb") as f:
+    f.write(onnx_model.SerializeToString())
+

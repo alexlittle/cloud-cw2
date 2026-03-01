@@ -3,3 +3,5 @@ scikit-learn
 numpy
 nfstream
 joblib
+onnxruntime
+skl2onnx
