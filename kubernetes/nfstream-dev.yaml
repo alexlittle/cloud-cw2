@@ -4,6 +4,10 @@ metadata:
   name: nfstream-pod
   namespace: nfstream
 spec:
+  initContainers:
+  - name: hello-world-test
+    image: hello-world # use the Docker provided one
+    command: []
   containers:
   - name: nfstream
     image: alextlittle/nfstream-ml-app:v2
