@@ -1,65 +1,98 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+import random
 
 
-def generate_synth_data(n_samples=50000):
-    np.random.seed(42)
-    data = []
+# types of traffic and characteristics
+classes = {
+    "DNS": {
+        "protocol": 17,  # UDP
+        "src_port": lambda: np.random.randint(1024, 65535),
+        "dst_port": 53,
+        "bidirectional_packets": lambda: np.random.randint(2, 10),
+        "bidirectional_bytes": lambda: np.random.randint(50, 500),
+        "duration_ms": lambda: np.random.randint(10, 100),
+        "application_name": "DNS",
+    },
+    "VoIP": {
+        "protocol": 17,  # UDP
+        "src_port": lambda: np.random.randint(1024, 65535),
+        "dst_port": lambda: random.choice([5060, 5061, 16384, 32768]),
+        "bidirectional_packets": lambda: np.random.randint(50, 500),
+        "bidirectional_bytes": lambda: np.random.randint(1000, 50000),
+        "duration_ms": lambda: np.random.randint(1000, 30000),
+        "application_name": "VoIP",
+    },
+    "HTTP": {
+        "protocol": 6,  # TCP
+        "src_port": lambda: np.random.randint(1024, 65535),
+        "dst_port": lambda: random.choice([80, 8080, 443]),
+        "bidirectional_packets": lambda: np.random.randint(50, 5000),
+        "bidirectional_bytes": lambda: np.random.randint(1000, 10000000),
+        "duration_ms": lambda: np.random.randint(100, 10000),
+        "application_name": "HTTP",
+    },
+    "Malicious": {
+        "protocol": lambda: random.choice([6, 17]),  # TCP or UDP
+        "src_port": lambda: np.random.randint(1024, 65535),
+        "dst_port": lambda: random.choice([4444, 8080, 22, 80, 443, 3389]),
+        "bidirectional_packets": lambda: np.random.randint(100, 10000),
+        "bidirectional_bytes": lambda: np.random.randint(5000, 5000000),
+        "duration_ms": lambda: np.random.randint(50, 5000),
+        "application_name": "Malicious",
+    },
+    "SSH": {
+        "protocol": 6,  # TCP
+        "src_port": lambda: np.random.randint(1024, 65535),
+        "dst_port": 22,
+        "bidirectional_packets": lambda: np.random.randint(100, 5000),
+        "bidirectional_bytes": lambda: np.random.randint(5000, 500000),
+        "duration_ms": lambda: np.random.randint(1000, 60000),
+        "application_name": "SSH",
+    },
+    "FTP": {
+        "protocol": 6,  # TCP
+        "src_port": lambda: np.random.randint(1024, 65535),
+        "dst_port": lambda: random.choice([20, 21]),
+        "bidirectional_packets": lambda: np.random.randint(100, 2000),
+        "bidirectional_bytes": lambda: np.random.randint(10000, 1000000),
+        "duration_ms": lambda: np.random.randint(500, 30000),
+        "application_name": "FTP",
+    },
+}
 
-    # actions and weightings
-    # 0 - targetA
-    # 1 - targetB
-    # 2 - malicious
-    actions = [0, 1, 2]
-    weights = [0.60, 0.35, 0.05]
+# Generate synthetic data
+def generate_data(class_name):
+    cls = classes[class_name]
+    return {
+        "src_port": cls["src_port"]() if callable(cls["src_port"]) else cls["src_port"],
+        "dst_port": cls["dst_port"]() if callable(cls["dst_port"]) else cls["dst_port"],
+        "protocol": cls["protocol"]() if callable(cls["protocol"]) else cls["protocol"],
+        "bidirectional_packets": cls["bidirectional_packets"](),
+        "bidirectional_bytes": cls["bidirectional_bytes"](),
+        "bidirectional_duration_ms": cls["duration_ms"](),
+        "application_name": cls["application_name"],
+    }
 
-    for _ in range(n_samples):
-        label = np.random.choice(actions, p=weights)
+data = []
+class_distribution = {
+    "DNS": 0.2,
+    "VoIP": 0.2,
+    "HTTP": 0.25,
+    "Malicious": 0.15,
+    "SSH": 0.1,
+    "FTP": 0.1,
+}
 
-        targetA_load = np.round(np.random.uniform(20, 95),2)
-        targetB_load = np.round(np.random.uniform(20, 95),2)
+for _ in range(50000):
+    class_name = np.random.choice(
+        list(class_distribution.keys()),
+        p=list(class_distribution.values())
+    )
+    data.append(generate_data(class_name))
 
-        if label == 2:
-            # if malicious
-            if np.random.random() < 0.6:
-                # for DDOS type
-                entropy = np.round(np.random.uniform(0.05, 0.2),2)
-                packet_count = np.random.randint(2000, 5000)
-                avg_pkt_size = np.random.randint(40, 80)
-            else:
-                # for scanning
-                entropy = np.round(np.random.uniform(0.3, 0.7), 2)
-                packet_count = np.random.randint(80, 900)
-                avg_pkt_size = np.random.randint(50, 1500)
-        else:
-            # estimates for normal traffic
-            entropy = np.round(np.random.uniform(0.1, 0.4),2)
-            packet_count = np.random.randint(100, 800)
-            avg_pkt_size = np.random.randint(500, 1500)
+# convert to pandas and save csv
+df = pd.DataFrame(data)
+df.to_csv("synth_traffic.csv", index=False)
 
-            # add some noise so not a straight if/then on the load
-            # use a base load, plus some extra latency if high load and penalise for bigger packets
-            baseA_load = 10
-            baseB_load = 11
-            latency_factor = 0.2
-            packet_factor = 0.005
-            noise = np.random.normal(0, 0.5)
-
-            totalA_load = baseA_load + (latency_factor * targetA_load) + (packet_factor * targetA_load) + noise
-            totalB_load = baseB_load + (latency_factor * targetB_load) + (packet_factor * targetB_load) + noise
-
-            # decide where to route
-            if targetA_load > 95:
-                label = 1
-            elif totalA_load < totalB_load:
-                label = 0
-            else:
-                label = 1
-
-        data.append([entropy, packet_count, avg_pkt_size, targetA_load, targetB_load, label])
-
-    return pd.DataFrame(data, columns=['entropy', 'packet_count', 'pkt_size', 'targetA_load', 'targetB_load', 'action'])
-
-
-df = generate_synth_data()
-df.to_csv("synth_traffic_data.csv", index=False)
+print("Generated synth traffic data csv file.")

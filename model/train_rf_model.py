@@ -6,17 +6,24 @@ from sklearn.metrics import accuracy_score, f1_score, classification_report, con
 import joblib
 
 
-df = pd.read_csv('synth_traffic_data.csv')
+df = pd.read_csv('synth_traffic.csv')
 
-X = df[["entropy", "packet_count", "pkt_size", "targetA_load", "targetB_load"]].copy()
-y = df["action"].astype(int).values
+
+
+X = df[["src_port",
+        "dst_port",
+        "protocol",
+        "bidirectional_packets",
+        "bidirectional_bytes",
+        "bidirectional_duration_ms"]].copy()
+y = df["application_name"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
 rf = RandomForestClassifier(
-    n_estimators=300,
-    max_depth=None,
-    min_samples_split=2,
+    n_estimators=100,
+    max_depth=5,
+    min_samples_split=5,
     min_samples_leaf=1,
     class_weight="balanced_subsample",
     random_state=42
@@ -38,4 +45,4 @@ print("Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred, labels=np.sort(np.unique(y))))
 
 
-joblib.dump(rf, "../trafficrouter/rf_model.pkl")
+joblib.dump(rf, "../nfstream/rf_model.pkl", compress=3)
