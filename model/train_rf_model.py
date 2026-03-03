@@ -8,15 +8,10 @@ from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
 
 
-df = pd.read_csv('synth_traffic.csv')
+df = pd.read_csv('./data/CIC-IDS2017.csv')
 
-X = df[["src_port",
-        "dst_port",
-        "protocol",
-        "bidirectional_packets",
-        "bidirectional_bytes",
-        "bidirectional_duration_ms"]].copy()
-y = df["application_name"]
+X = df.drop(columns=["Label"]).copy()
+y = df["Label"].copy()
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
@@ -53,6 +48,6 @@ initial_type = [('float_input', FloatTensorType([None, 6]))]
 
 onnx_model = convert_sklearn(rf_model, initial_types=initial_type)
 
-with open("../nfstream/rf_model.onnx", "wb") as f:
+with open("../xapp/rf_model.onnx", "wb") as f:
     f.write(onnx_model.SerializeToString())
 
