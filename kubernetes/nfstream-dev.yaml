@@ -9,7 +9,7 @@ spec:
     image: hello-world # use the Docker provided one
     command: []
   containers:
-  - name: nfstream
+  - name: xapp
     image: alextlittle/nfstream-ml-app:v2
     imagePullPolicy: Never
     env:
@@ -17,3 +17,10 @@ spec:
       value: "1"
     securityContext:
       privileged: true
+    # limit container size to 1cpu and 2gb ram
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "1000m"

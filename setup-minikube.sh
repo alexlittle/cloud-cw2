@@ -7,25 +7,25 @@ minikube delete
 
 # Start minikube
 echo "Starting Minikube"
-minikube start --cpus 2 --memory 2048 --driver=docker
+minikube start --cpus 2 --memory 4096 --driver=docker
 
 # Create the nfstream namespace
 echo "Creating nfstream namespace..."
-kubectl create namespace nfstream
+kubectl create namespace alexxapp
 
 # Set up docker env
 echo "Setting up Docker env..."
 eval $(minikube docker-env)
 
 # go to docker build dir
-cd nfstream
+cd xapp
 # Build the Docker image
 echo "Building Docker image..."
 docker build -t alextlittle/nfstream-ml-app:v2 .
 
 echo "Deploying app for local development..."
-kubectl apply -f ../kubernetes/nfstream-dev.yaml -n nfstream
+kubectl apply -f ../kubernetes/xapp-dev.yaml -n alexxapp
 
 # pods running
 echo "Showing running pods..."
-kubectl get pods -n nfstream
+kubectl get pods -n alexxapp

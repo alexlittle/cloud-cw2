@@ -19,9 +19,10 @@ def extract_features(flow):
 
 
 for flow in streamer:
-    features = extract_features(flow)
-    input_name = sess.get_inputs()[0].name
-    output_name = sess.get_outputs()[0].name
-    prediction = sess.run([output_name], {input_name: features})
+    print("Flow:", flow)
+    #features = extract_features(flow)
+    #input_name = sess.get_inputs()[0].name
+    #output_name = sess.get_outputs()[0].name
+    #prediction = sess.run([output_name], {input_name: features})
 
-    print("Prediction:", prediction[0][0])
+    #print("Prediction:", prediction[0][0])

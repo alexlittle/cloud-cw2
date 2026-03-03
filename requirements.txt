@@ -5,3 +5,5 @@ nfstream
 joblib
 onnxruntime
 skl2onnx
+pyarrow
+fastparquet
