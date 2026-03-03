@@ -70,3 +70,5 @@ nf["Label"] = (nf["Label"] == "Benign").astype(int)
 
 nf.to_csv("./data/CIC-IDS2017.csv", index=False)
 
+
+

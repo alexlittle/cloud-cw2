@@ -2,3 +2,4 @@ joblib
 nfstream
 onnxruntime
 numpy
+prometheus_client

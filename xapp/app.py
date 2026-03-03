@@ -1,28 +1,53 @@
 import numpy as np
 import onnxruntime as ort
+import json
+import time
 from nfstream import NFStreamer
+from prometheus_client import start_http_server, Gauge
 
 sess = ort.InferenceSession("./rf_model.onnx")
 streamer = NFStreamer(source="eth0", idle_timeout=1, active_timeout=5)
 
-def extract_features(flow):
-    return np.array([
-    [
-        flow.src_port,
-        flow.dst_port,
-        flow.protocol,
-        flow.bidirectional_packets,
-        flow.bidirectional_bytes,
-        flow.bidirectional_duration_ms,
-    ]
-    ], dtype = np.float32)
 
+with open("./features.json", "r") as f:
+    feature_order = json.load(f)
+
+
+def extract_features(flow):
+    value_by_name = {
+        "protocol": getattr(flow, "protocol", None),
+        "duration": getattr(flow, "duration", None),
+        "fwd_packets": getattr(flow, "fwd_packets", None),
+        "bwd_packets": getattr(flow, "bwd_packets", None),
+        "fwd_bytes": getattr(flow, "fwd_bytes", None),
+        "bwd_bytes": getattr(flow, "bwd_bytes", None),
+        "pkt_len_mean": getattr(flow, "pkt_len_mean", None),
+        "pkt_len_std": getattr(flow, "pkt_len_std", None),
+        "fwd_pkt_len_mean": getattr(flow, "fwd_pkt_len_mean", None),
+        "fwd_pkt_len_std": getattr(flow, "fwd_pkt_len_std", None),
+        "bwd_pkt_len_mean": getattr(flow, "bwd_pkt_len_mean", None),
+        "bwd_pkt_len_std": getattr(flow, "bwd_pkt_len_std", None),
+        "iat_mean": getattr(flow, "iat_mean", None),
+        "fwd_iat_mean": getattr(flow, "fwd_iat_mean", None),
+        "bwd_iat_mean": getattr(flow, "bwd_iat_mean", None),
+        "syn_count": getattr(flow, "syn_count", None),
+        "fin_count": getattr(flow, "fin_count", None),
+        "psh_count": getattr(flow, "psh_count", None),
+        "ack_count": getattr(flow, "ack_count", None),
+    }
+
+    row = [value_by_name[name] for name in feature_order]
+    return np.asarray([row], dtype=np.float32)
+
+LATENCY = Gauge('xapp_inference_latency_ms', 'Time taken for prediction')
+start_http_server(8000)
 
 for flow in streamer:
     print("Flow:", flow)
-    #features = extract_features(flow)
-    #input_name = sess.get_inputs()[0].name
-    #output_name = sess.get_outputs()[0].name
-    #prediction = sess.run([output_name], {input_name: features})
-
-    #print("Prediction:", prediction[0][0])
+    start_time = time.time()
+    features = extract_features(flow)
+    input_name = sess.get_inputs()[0].name
+    output_name = sess.get_outputs()[0].name
+    prediction = sess.run([output_name], {input_name: features})
+    LATENCY.set((time.time() - start_time) * 1000)
+    print("Prediction:", prediction[0][0])

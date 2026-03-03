@@ -7,3 +7,4 @@ onnxruntime
 skl2onnx
 pyarrow
 fastparquet
+prometheus_client

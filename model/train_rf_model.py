@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 import numpy as np
 import joblib
@@ -12,6 +14,8 @@ df = pd.read_csv('./data/CIC-IDS2017.csv')
 
 X = df.drop(columns=["Label"]).copy()
 y = df["Label"].copy()
+
+feature_order = X.columns.tolist()
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
@@ -44,9 +48,12 @@ joblib.dump(rf, "./rf_model.pkl", compress=3)
 
 rf_model = joblib.load("./rf_model.pkl")
 
-initial_type = [('float_input', FloatTensorType([None, 6]))]
+initial_type = [('float_input', FloatTensorType([None, len(feature_order)]))]
 
 onnx_model = convert_sklearn(rf_model, initial_types=initial_type)
+
+with open("../xapp/features.json", "w") as f:
+    json.dump(feature_order, f)
 
 with open("../xapp/rf_model.onnx", "wb") as f:
     f.write(onnx_model.SerializeToString())

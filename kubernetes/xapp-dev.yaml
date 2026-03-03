@@ -17,6 +17,8 @@ spec:
       value: "1"
     securityContext:
       privileged: true
+    ports:
+      - containerPort: 8000
     # limit container size to 1cpu and 2gb ram
     resources:
       requests:
