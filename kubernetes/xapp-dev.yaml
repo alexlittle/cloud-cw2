@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: nfstream-pod
-  namespace: nfstream
+  namespace: alexxapp
 spec:
   initContainers:
   - name: hello-world-test
@@ -18,9 +18,10 @@ spec:
     securityContext:
       privileged: true
     # limit container size to 1cpu and 2gb ram
-    requests:
-      memory: "1Gi"
-      cpu: "500m"
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
       limits:
         memory: "2Gi"
         cpu: "1000m"

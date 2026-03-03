@@ -1,7 +1,7 @@
 
 import pandas as pd
 
-df = pd.read_parquet("archive/Bruteforce-Tuesday-no-metadata.parquet")
+df = pd.read_parquet("data/Bruteforce-Tuesday-no-metadata.parquet")
 
 print(df.columns)
 print(df["Label"].value_counts())
