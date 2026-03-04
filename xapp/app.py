@@ -3,7 +3,7 @@ import onnxruntime as ort
 import json
 import time
 from nfstream import NFStreamer
-from prometheus_client import start_http_server, Gauge
+from prometheus_client import start_http_server, Gauge, Counter
 
 sess = ort.InferenceSession("./rf_model.onnx")
 streamer = NFStreamer(source="eth0", idle_timeout=1, active_timeout=5)
@@ -40,14 +40,19 @@ def extract_features(flow):
     return np.asarray([row], dtype=np.float32)
 
 LATENCY = Gauge('xapp_inference_latency_ms', 'Time taken for prediction')
+FLOW_COUNT = Counter('xapp_flows_total', 'Total number of flows processed')
+PREDICTION = Gauge('xapp_last_prediction', 'Last prediction value')
 start_http_server(8000)
 
 for flow in streamer:
-    print("Flow:", flow)
+    print(f"Flow req {flow.id}: {flow.requested_server_name}")
+    FLOW_COUNT.inc()
     start_time = time.time()
     features = extract_features(flow)
     input_name = sess.get_inputs()[0].name
     output_name = sess.get_outputs()[0].name
     prediction = sess.run([output_name], {input_name: features})
+    print((time.time() - start_time) * 1000)
     LATENCY.set((time.time() - start_time) * 1000)
     print("Prediction:", prediction[0][0])
+    PREDICTION.set(prediction[0][0])

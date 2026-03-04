@@ -3,6 +3,8 @@ kind: Pod
 metadata:
   name: nfstream-pod
   namespace: alexxapp
+  labels:
+    app: nfstream
 spec:
   initContainers:
   - name: hello-world-test
@@ -27,3 +29,15 @@ spec:
       limits:
         memory: "2Gi"
         cpu: "1000m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfstream-service
+  namespace: alexxapp
+spec:
+  selector:
+    app: nfstream
+  ports:
+  - port: 8000
+    targetPort: 8000

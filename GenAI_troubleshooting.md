@@ -9,3 +9,8 @@ Information regarding use of Gen AI (CoPilot) in this project:
 | | | |
 | | | |
 | | | |
+
+
+Configuring the prometheus and grafana monitoring and connecting to the datasource.
+
+No data showing in panel:
