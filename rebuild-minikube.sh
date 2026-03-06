@@ -9,6 +9,7 @@ minikube start --cpus 2 --memory 4096 --driver=docker
 
 echo "Create namespaces..."
 kubectl create namespace alexxapp
+kubectl create namespace monitoring
 
 echo "Setting up Docker env..."
 eval $(minikube docker-env)
@@ -18,13 +19,13 @@ cd xapp
 echo "Building Docker image..."
 docker build -t alextlittle/nfstream-ml-app:v2 .
 
-echo "Deploying app for local development..."
+echo "Deploying app ..."
 kubectl apply -f ../kubernetes/xapp-dev.yaml -n alexxapp
 
-echo "Setting up monitoring..."
+echo "Set up monitoring..."
 kubectl apply -f ../kubernetes/monitoring.yaml
 
-echo "Waiting for monitoring to be ready..."
+echo "Wait for monitoring "
 kubectl wait --for=condition=ready pod -l app=prometheus -n monitoring --timeout=90s
 kubectl wait --for=condition=ready pod -l app=grafana -n monitoring --timeout=90s
 
@@ -32,8 +33,7 @@ echo "Starting port forwarding..."
 kubectl port-forward service/prometheus 9090:9090 -n monitoring &
 kubectl port-forward service/grafana 3000:3000 -n monitoring &
 
-echo "Done! Grafana at http://localhost:3000 (admin/admin)"
-echo "Prometheus at http://localhost:9090"
+echo "Grafana & Prometheus running"
 
 
 # pods running

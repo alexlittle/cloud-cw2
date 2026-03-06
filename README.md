@@ -6,18 +6,23 @@
 ## Directory/File Overview:
 
 ```
+- kubernetes/ - k8s scripts for loading monitor and xApp
+    ├ monitoring.yaml
+    └ xapp-dev.yaml
 - model/ - for training/creating model that will be used for classifying network traffic types
-    ├ create_synth_data.py - script to generate some synthetic training data
-    ├ synth_traffic.csv - data created
+
     └ train_rf_model.py - script to train Random Forest model
-- nfstream/ - the VNF to be deployed
-    ├ 
-    ├ 
+- xapp/ - the VNF to be deployed
+    ├ app.py
+    ├ Dockerfile
+    ├ features.json
     ├ requirements.txt - requirements needed just for the function
-    └ rf_model.pkl - Random Forest model in pickle format
+    └ rf_model.onnx - Random Forest model in ONNX format
+- dashboard.json
 - GenAI_troubleshooting.md
 - requirements.txt - requirements for all components, including the model
-
+- rebuild-minikube.sh
+- requirements.txt - requirements needed for model training and the xApp
 ```
 
 

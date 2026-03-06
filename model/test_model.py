@@ -2,7 +2,7 @@ import numpy as np
 import onnxruntime as ort
 
 
-sess = ort.InferenceSession("../nfstream/rf_model.onnx")
+sess = ort.InferenceSession("../xapp/rf_model.onnx")
 
 features = {
     "src_port": 12345,
