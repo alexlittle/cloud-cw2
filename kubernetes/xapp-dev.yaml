@@ -12,7 +12,7 @@ spec:
     command: []
   containers:
   - name: xapp
-    image: alextlittle/nfstream-ml-app:v2
+    image: alextlittle/nfstream-ml-app:v3
     imagePullPolicy: Never
     env:
     - name: PYTHONUNBUFFERED
@@ -21,6 +21,8 @@ spec:
       privileged: true
     ports:
       - containerPort: 8000
+      - containerPort: 5201
+        name: iperf
     # limit container size to 1cpu and 2gb ram
     resources:
       requests:
@@ -41,3 +43,7 @@ spec:
   ports:
   - port: 8000
     targetPort: 8000
+    name: metrics
+  - port: 5201
+    targetPort: 5201
+    name: iperf

@@ -18,7 +18,7 @@ cd xapp
 docker build -t alextlittle/nfstream-ml-app:v2 .
 
 echo "Importing image into k3s..."
-docker save alextlittle/nfstream-ml-app:v2 | sudo k3s ctr images import -
+docker save alextlittle/nfstream-ml-app:v3 | sudo k3s ctr images import -
 
 echo "Deploying app for local development..."
 kubectl apply -f ../kubernetes/xapp-dev.yaml -n alexxapp

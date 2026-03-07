@@ -6,7 +6,7 @@ from nfstream import NFStreamer
 from prometheus_client import start_http_server, Gauge, Counter
 
 sess = ort.InferenceSession("./rf_model.onnx")
-streamer = NFStreamer(source="eth0", idle_timeout=1, active_timeout=5)
+streamer = NFStreamer(source="any", idle_timeout=1, active_timeout=5)
 
 
 with open("./features.json", "r") as f:

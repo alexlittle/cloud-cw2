@@ -17,13 +17,22 @@ eval $(minikube docker-env)
 cd xapp
 # Build the Docker image
 echo "Building Docker image..."
-docker build -t alextlittle/nfstream-ml-app:v2 .
+docker build -t alextlittle/nfstream-ml-app:v3 .
 
 echo "Deploying app ..."
-kubectl apply -f ../kubernetes/xapp-dev.yaml -n alexxapp
+kubectl apply -f ../kubernetes/xapp-dev.yaml
+
+echo "waiting for service to be ready"
+until kubectl get svc nfstream-service -n alexxapp >/dev/null 2>&1; do
+    printf "."
+    sleep 2
+done
 
 echo "Set up monitoring..."
 kubectl apply -f ../kubernetes/monitoring.yaml
+
+echo "Wait for xapp pod - needs to be up before running iperf command"
+kubectl wait --for=condition=ready pod -l app=nfstream -n alexxapp --timeout=120s
 
 echo "Wait for monitoring "
 kubectl wait --for=condition=ready pod -l app=prometheus -n monitoring --timeout=90s
@@ -31,10 +40,16 @@ kubectl wait --for=condition=ready pod -l app=grafana -n monitoring --timeout=90
 
 echo "Starting port forwarding..."
 kubectl port-forward service/prometheus 9090:9090 -n monitoring &
+sleep 2
 kubectl port-forward service/grafana 3000:3000 -n monitoring &
+sleep 2
+kubectl port-forward service/nfstream-service 5201:5201 -n alexxapp &
+sleep 2
 
 echo "Grafana & Prometheus running"
 
+echo "Starting iperf3"
+kubectl exec -n alexxapp nfstream-pod -c xapp -- iperf3 -s -p 5201 &
 
 # pods running
 echo "Showing running pods..."
