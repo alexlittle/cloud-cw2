@@ -20,7 +20,7 @@ eval $(minikube docker-env)
 cd xapp
 # Build the Docker image
 echo "Building Docker image..."
-docker build -t alextlittle/nfstream-ml-app:v3 .
+docker build -t alextlittle/nfstream-ml-app:v4 .
 
 echo "Deploying app ..."
 kubectl apply -f ../kubernetes/xapp-dev.yaml
@@ -44,13 +44,9 @@ kubectl port-forward service/prometheus 9090:9090 -n monitoring &
 sleep 2
 kubectl port-forward service/grafana 3000:3000 -n monitoring &
 sleep 2
-kubectl port-forward service/nfstream-service 5201:5201 -n alexxapp &
-sleep 2
+
 
 echo "Grafana & Prometheus running"
-
-echo "Starting iperf3"
-kubectl exec -n alexxapp nfstream-pod -c xapp -- iperf3 -s -p 5201 &
 
 # pods running
 echo "Showing running pods..."

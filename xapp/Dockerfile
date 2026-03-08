@@ -1,11 +1,10 @@
 FROM python:3.10-slim
 
-# ensure NFstream dependencies are installed
+# ensure NFstream dependencies and monitoring test/tools are installed
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpcap-dev \
     pkg-config \
-    iperf3 \
     && rm -rf /var/lib/apt/lists/*
 
 

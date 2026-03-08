@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: traffic-gen
+  namespace: alexxapp
+spec:
+  containers:
+  - name: traffic-gen
+    image: ubuntu
+    command: ["sh", "-c", "apt-get update && apt-get install -y tcpreplay iproute2 && sleep infinity"]
+    volumeMounts:
+      - mountPath: /pcaps
+        name: pcap-volume
+    securityContext:
+      privileged: true  # Required for tcpreplay
+  volumes:
+    - name: pcap-volume
+      hostPath:
+        path: /home/alex/Downloads/pcap/
+

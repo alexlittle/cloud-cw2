@@ -22,10 +22,10 @@ echo "Building Docker image and loading into k3s containerd..."
 cd xapp
 
 # Build the Docker image
-docker build -t alextlittle/nfstream-ml-app:v3 .
+docker build -t alextlittle/nfstream-ml-app:v4 .
 
 echo "Importing image into k3s..."
-docker save alextlittle/nfstream-ml-app:v3 | sudo k3s ctr images import -
+docker save alextlittle/nfstream-ml-app:v4 | sudo k3s ctr images import -
 
 echo "Deploying app for local development..."
 kubectl apply -f ../kubernetes/xapp-dev.yaml -n alexxapp
@@ -33,7 +33,7 @@ kubectl apply -f ../kubernetes/xapp-dev.yaml -n alexxapp
 echo "Set up monitoring..."
 kubectl apply -f ../kubernetes/monitoring.yaml -n monitoring
 
-echo "Wait for pods - needs to be up to port forward & connect to iperf"
+echo "Wait for pods - needs to be up to port forward"
 kubectl wait --for=condition=ready pod -l app=nfstream -n alexxapp --timeout=120s
 kubectl wait --for=create pod -l app=prometheus -n monitoring --timeout=30s
 kubectl wait --for=create pod -l app=grafana -n monitoring --timeout=30s
@@ -47,8 +47,6 @@ echo "Starting port forwarding..."
 kubectl port-forward service/prometheus 9090:9090 -n monitoring &
 sleep 2
 kubectl port-forward service/grafana 3000:3000 -n monitoring &
-sleep 2
-kubectl port-forward service/nfstream-service 5201:5201 -n alexxapp &
 sleep 2
 
 echo "Showing running pods in alexxapp..."

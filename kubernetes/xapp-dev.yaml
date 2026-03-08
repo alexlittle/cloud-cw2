@@ -6,13 +6,14 @@ metadata:
   labels:
     app: nfstream
 spec:
+  hostNetwork: true
   initContainers:
   - name: hello-world-test
     image: hello-world # use the Docker provided one
     command: []
   containers:
   - name: xapp
-    image: alextlittle/nfstream-ml-app:v3
+    image: alextlittle/nfstream-ml-app:v4
     imagePullPolicy: Never
     env:
     - name: PYTHONUNBUFFERED
@@ -21,8 +22,6 @@ spec:
       privileged: true
     ports:
       - containerPort: 8000
-      - containerPort: 5201
-        name: iperf
     # limit container size to 1cpu and 2gb ram
     resources:
       requests:
@@ -44,6 +43,3 @@ spec:
   - port: 8000
     targetPort: 8000
     name: metrics
-  - port: 5201
-    targetPort: 5201
-    name: iperf

@@ -297,13 +297,13 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(process_cpu_seconds_total{job=\"alex-app\"}[1m])",
+          "expr": "rate(process_cpu_seconds_total{job=\"alex-app\"}[1m])*100",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "CPU (%)",
+      "title": "xApp CPU process usage as % of total CPU)",
       "type": "timeseries"
     },
     {
@@ -415,6 +415,6 @@
   "timezone": "browser",
   "title": "xApp",
   "uid": "ad5tzpk",
-  "version": 6,
+  "version": 2,
   "weekStart": ""
 }
