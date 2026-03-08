@@ -2,9 +2,8 @@ import numpy as np
 import onnxruntime as ort
 import json
 import time
-from collections import deque
 from nfstream import NFStreamer
-from prometheus_client import start_http_server, Gauge, Counter
+from prometheus_client import start_http_server, Gauge, Counter, Histogram
 
 sess = ort.InferenceSession("./rf_model.onnx")
 streamer = NFStreamer(source="any")
@@ -40,26 +39,24 @@ def extract_features(flow):
     return np.asarray([row], dtype=np.float32)
 
 # Metrics to send to Prometheus & Grafana
-LATENCY = Gauge('xapp_inference_latency_ms', 'Time taken for prediction')
+LATENCY = Histogram(
+    'xapp_inference_latency_ms',
+    'Time taken for prediction in milliseconds',
+    buckets=[0.01, 0.02, 0.05, 0.08, 0.1, 0.12, 0.15, 0.18, 0.2, 0.5, 1.0]
+)
 FLOW_COUNT = Counter('xapp_flows_total', 'Total number of flows processed')
 PREDICTION = Gauge('xapp_last_prediction', 'Last prediction value')
-flow_window = deque(maxlen=60)
-FLOW_RATE = Gauge('xapp_flows_per_minute', 'Number of flows processed per minute')
 
 start_http_server(8000)
 
 for flow in streamer:
     print(f"Flow req {flow.id}: {flow.requested_server_name}")
     FLOW_COUNT.inc()
-    flow_window.append(time.time())
-    while flow_window and flow_window[0] < time.time() - 60:
-        flow_window.popleft()
-    FLOW_RATE.set(len(flow_window))
     start_time = time.time()
     features = extract_features(flow)
     input_name = sess.get_inputs()[0].name
     output_name = sess.get_outputs()[0].name
     prediction = sess.run([output_name], {input_name: features})
-    LATENCY.set((time.time() - start_time) * 1000)
+    LATENCY.observe((time.time() - start_time) * 1000)
     print("Prediction:", prediction[0][0])
     PREDICTION.set(prediction[0][0])

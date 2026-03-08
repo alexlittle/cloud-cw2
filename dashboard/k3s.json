@@ -105,10 +105,34 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "xapp_inference_latency_ms",
-          "legendFormat": "__auto",
+          "expr": "rate(xapp_inference_latency_ms_sum[1m]) / rate(xapp_inference_latency_ms_count[1m])",
+          "legendFormat": "Average",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, rate(xapp_inference_latency_ms_bucket[1m]))",
+          "instant": false,
+          "legendFormat": "P95 Latency",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.99, rate(xapp_inference_latency_ms_bucket[1m]))",
+          "instant": false,
+          "legendFormat": "P99 Latency",
+          "range": true,
+          "refId": "C"
         }
       ],
       "title": "xApp latency (ms)",
@@ -199,7 +223,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "xapp_flows_per_minute",
+          "expr": "rate(xapp_flows_total[1m]) * 60",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -415,6 +439,6 @@
   "timezone": "browser",
   "title": "xApp",
   "uid": "ad5tzpk",
-  "version": 2,
+  "version": 6,
   "weekStart": ""
 }
