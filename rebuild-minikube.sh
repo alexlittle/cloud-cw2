@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# stop k3s if running
+sudo systemctl stop k3s
+
 echo "rebuilding Minikube setup"
 minikube stop
 minikube delete
@@ -31,10 +34,8 @@ done
 echo "Set up monitoring..."
 kubectl apply -f ../kubernetes/monitoring.yaml
 
-echo "Wait for xapp pod - needs to be up before running iperf command"
+echo "Wait for pods - needs to be up to port forward & connect to iperf"
 kubectl wait --for=condition=ready pod -l app=nfstream -n alexxapp --timeout=120s
-
-echo "Wait for monitoring "
 kubectl wait --for=condition=ready pod -l app=prometheus -n monitoring --timeout=90s
 kubectl wait --for=condition=ready pod -l app=grafana -n monitoring --timeout=90s
 

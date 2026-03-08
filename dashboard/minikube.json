@@ -111,7 +111,7 @@
           "refId": "A"
         }
       ],
-      "title": "xApp latency",
+      "title": "xApp latency (ms)",
       "type": "timeseries"
     },
     {
@@ -181,7 +181,7 @@
         "x": 12,
         "y": 0
       },
-      "id": 1,
+      "id": 3,
       "options": {
         "legend": {
           "calcs": [],
@@ -198,18 +198,14 @@
       "pluginVersion": "12.4.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
           "editorMode": "code",
-          "expr": "rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\"}[30s]) * 100",
+          "expr": "xapp_flows_per_minute",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "CPU",
+      "title": "xApp Flow Rate (per min)",
       "type": "timeseries"
     },
     {
@@ -279,7 +275,7 @@
         "x": 0,
         "y": 8
       },
-      "id": 3,
+      "id": 4,
       "options": {
         "legend": {
           "calcs": [],
@@ -297,13 +293,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "process_resident_memory_bytes{job=\"alex-app\"}",
+          "expr": "container_memory_working_set_bytes{namespace=\"alexxapp\", pod=\"nfstream-pod\"} / 1024 / 1024",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Process RAM",
+      "title": "Container RAM Usage (Mb)",
       "type": "timeseries"
     },
     {
@@ -373,7 +369,7 @@
         "x": 12,
         "y": 8
       },
-      "id": 4,
+      "id": 1,
       "options": {
         "legend": {
           "calcs": [],
@@ -390,14 +386,18 @@
       "pluginVersion": "12.4.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "editorMode": "code",
-          "expr": "container_memory_working_set_bytes{namespace=\"alexxapp\", pod=\"nfstream-pod\"} / 1024 / 1024",
+          "expr": "rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\"}[30s]) * 100",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Container RAM",
+      "title": "CPU (%)",
       "type": "timeseries"
     }
   ],
@@ -415,6 +415,6 @@
   "timezone": "browser",
   "title": "xApp",
   "uid": "ad5tzpk",
-  "version": 2,
+  "version": 6,
   "weekStart": ""
 }

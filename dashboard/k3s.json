@@ -111,7 +111,7 @@
           "refId": "A"
         }
       ],
-      "title": "xApp latency",
+      "title": "xApp latency (ms)",
       "type": "timeseries"
     },
     {
@@ -181,7 +181,7 @@
         "x": 12,
         "y": 0
       },
-      "id": 1,
+      "id": 3,
       "options": {
         "legend": {
           "calcs": [],
@@ -198,18 +198,14 @@
       "pluginVersion": "12.4.0",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
           "editorMode": "code",
-          "expr": "rate(process_cpu_seconds_total{job=\"alex-app\"}[1m])",
+          "expr": "xapp_flows_per_minute",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "CPU",
+      "title": "xApp Flow Rate (per min)",
       "type": "timeseries"
     },
     {
@@ -279,7 +275,7 @@
         "x": 0,
         "y": 8
       },
-      "id": 3,
+      "id": 1,
       "options": {
         "legend": {
           "calcs": [],
@@ -296,14 +292,18 @@
       "pluginVersion": "12.4.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "editorMode": "code",
-          "expr": "process_resident_memory_bytes{job=\"alex-app\"}",
+          "expr": "rate(process_cpu_seconds_total{job=\"alex-app\"}[1m])",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Process RAM",
+      "title": "CPU (%)",
       "type": "timeseries"
     },
     {
@@ -397,7 +397,7 @@
           "refId": "A"
         }
       ],
-      "title": "Container RAM",
+      "title": "Container RAM Usage (Mb)",
       "type": "timeseries"
     }
   ],
@@ -408,13 +408,13 @@
     "list": []
   },
   "time": {
-    "from": "2026-03-06T16:56:18.311Z",
-    "to": "2026-03-06T19:14:55.209Z"
+    "from": "now-15m",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "xApp",
   "uid": "ad5tzpk",
-  "version": 5,
+  "version": 6,
   "weekStart": ""
 }
