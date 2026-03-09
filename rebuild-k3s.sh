@@ -2,13 +2,20 @@
 set -e
 
 # make sure minikube isn't running
-minikube stop
+minikube stop || true
+
+# reset k3s config, otherwise minikube config stays
+mkdir -p ~/.kube
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $(id -u):$(id -g) ~/.kube/config
+export KUBECONFIG=~/.kube/config
 
 pkill -f "kubectl port-forward" || true
 sleep 2
 
-sudo systemctl start k3s
 echo "Rebuilding k3s"
+sudo systemctl restart k3s
+
 
 kubectl delete namespace alexxapp --ignore-not-found=true
 kubectl delete namespace monitoring --ignore-not-found=true

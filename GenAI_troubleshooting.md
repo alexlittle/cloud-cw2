@@ -3,10 +3,10 @@
 Information regarding use of Gen AI (CoPilot) in this project:
 
 
+- switching between minikube and k3s - for k3s the config needs to be reset
 ## Issue 1: Configuring the prometheus and grafana monitoring and connecting to the datasource.
 
 **Problem**: No data showing in panel
-
 
 **Prompt**:
 
