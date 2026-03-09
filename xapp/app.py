@@ -6,7 +6,7 @@ from nfstream import NFStreamer
 from prometheus_client import start_http_server, Gauge, Counter, Histogram
 
 sess = ort.InferenceSession("./rf_model.onnx")
-streamer = NFStreamer(source="any")
+streamer = NFStreamer(source="any", idle_timeout=1, active_timeout=1)
 
 
 with open("./features.json", "r") as f:
@@ -42,7 +42,7 @@ def extract_features(flow):
 LATENCY = Histogram(
     'xapp_inference_latency_ms',
     'Time taken for prediction in milliseconds',
-    buckets=[0.01, 0.02, 0.05, 0.08, 0.1, 0.12, 0.15, 0.18, 0.2, 0.5, 1.0]
+    buckets=[0.0001, 0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5,1.0]
 )
 FLOW_COUNT = Counter('xapp_flows_total', 'Total number of flows processed')
 PREDICTION = Gauge('xapp_last_prediction', 'Last prediction value')

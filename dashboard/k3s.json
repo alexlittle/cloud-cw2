@@ -101,7 +101,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -116,7 +116,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, rate(xapp_inference_latency_ms_bucket[1m]))",
+          "expr": "histogram_quantile(0.95, sum(rate(xapp_inference_latency_ms_bucket[1m])) by (le))",
           "instant": false,
           "legendFormat": "P95 Latency",
           "range": true,
@@ -128,7 +128,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.99, rate(xapp_inference_latency_ms_bucket[1m]))",
+          "expr": "histogram_quantile(0.99, sum(rate(xapp_inference_latency_ms_bucket[1m])) by (le))",
           "instant": false,
           "legendFormat": "P99 Latency",
           "range": true,
@@ -189,7 +189,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -204,7 +204,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, rate(xapp_inference_latency_ms_bucket[1m]))",
+          "expr": "histogram_quantile(0.95, sum(rate(xapp_inference_latency_ms_bucket[1m])) by (le))",
           "instant": false,
           "legendFormat": "P95",
           "range": true,
@@ -216,7 +216,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.99, rate(xapp_inference_latency_ms_bucket[1m]))",
+          "expr": "histogram_quantile(0.99, sum(rate(xapp_inference_latency_ms_bucket[1m])) by (le))",
           "instant": false,
           "legendFormat": "P99",
           "range": true,
@@ -307,7 +307,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -367,7 +367,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -461,7 +461,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.1",
       "targets": [
         {
           "datasource": {
@@ -469,7 +469,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\", container=\"xapp\"}[1m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\", container=\"xapp\"}[1m])) by (pod) *100",
           "legendFormat": "CPU Usage",
           "range": true,
           "refId": "A"
@@ -529,11 +529,11 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.1",
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\", container=\"xapp\"}[1m])) by (pod)",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\", container=\"xapp\"}[1m])) by (pod)*100",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -623,7 +623,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -683,7 +683,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.4.0",
+      "pluginVersion": "12.4.1",
       "targets": [
         {
           "editorMode": "code",
@@ -698,20 +698,20 @@
     }
   ],
   "preload": false,
-  "refresh": "10s",
+  "refresh": "",
   "schemaVersion": 42,
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "xApp",
   "uid": "ad5tzpk",
-  "version": 14,
+  "version": 3,
   "weekStart": ""
 }
