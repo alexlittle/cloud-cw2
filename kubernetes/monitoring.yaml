@@ -28,16 +28,16 @@ data:
             regex: (.+)
             target_label: __metrics_path__
             replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
-        metric_relabel_configs:
-          - source_labels: [namespace]
-            regex: alexxapp
-            action: keep
-          - source_labels: [pod]
-            regex: nfstream-pod
-            action: keep
-          - source_labels: [container]
-            regex: xapp
-            action: keep
+        #metric_relabel_configs:
+        #  - source_labels: [namespace]
+        #    regex: alexxapp
+        #    action: keep
+        #  - source_labels: [pod]
+        #    regex: nfstream-pod
+        #    action: keep
+        #  - source_labels: [container]
+        #    regex: xapp
+        #    action: keep
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -144,7 +144,7 @@ metadata:
   name: prometheus-server-role
 rules:
   - apiGroups: [""]
-    resources: ["nodes", "nodes/proxy", "services", "endpoints", "pods"]
+    resources: ["nodes", "nodes/proxy","nodes/metrics", "services", "endpoints", "pods"]
     verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1

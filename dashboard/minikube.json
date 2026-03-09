@@ -105,10 +105,34 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "xapp_inference_latency_ms",
-          "legendFormat": "__auto",
+          "expr": "rate(xapp_inference_latency_ms_sum[1m]) / rate(xapp_inference_latency_ms_count[1m])",
+          "legendFormat": "Average",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, rate(xapp_inference_latency_ms_bucket[1m]))",
+          "instant": false,
+          "legendFormat": "P95",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.99, rate(xapp_inference_latency_ms_bucket[1m]))",
+          "instant": false,
+          "legendFormat": "P99",
+          "range": true,
+          "refId": "C"
         }
       ],
       "title": "xApp latency (ms)",
@@ -199,8 +223,8 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "xapp_flows_per_minute",
-          "legendFormat": "__auto",
+          "expr": "rate(xapp_flows_total[1m]) * 60",
+          "legendFormat": "Flow Rate",
           "range": true,
           "refId": "A"
         }
@@ -293,13 +317,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "container_memory_working_set_bytes{namespace=\"alexxapp\", pod=\"nfstream-pod\"} / 1024 / 1024",
-          "legendFormat": "__auto",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\", container=\"\"}[1m])) by (pod)",
+          "legendFormat": "CPU Usage (%)",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Container RAM Usage (Mb)",
+      "title": "CPU Usage (%)",
       "type": "timeseries"
     },
     {
@@ -391,13 +415,13 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\"}[30s]) * 100",
-          "legendFormat": "__auto",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"alexxapp\", pod=\"nfstream-pod\", container=\"\"}) by (pod) / 1024 / 1024",
+          "legendFormat": "RAM Usage",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "CPU (%)",
+      "title": "Container RAM Usage (Mb)",
       "type": "timeseries"
     }
   ],
@@ -408,13 +432,13 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "xApp",
   "uid": "ad5tzpk",
-  "version": 6,
+  "version": 3,
   "weekStart": ""
 }

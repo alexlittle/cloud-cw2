@@ -34,7 +34,7 @@ done
 echo "Set up monitoring..."
 kubectl apply -f ../kubernetes/monitoring.yaml
 
-echo "Wait for pods - needs to be up to port forward & connect to iperf"
+echo "Wait for pods - needs to be up to port forward "
 kubectl wait --for=condition=ready pod -l app=nfstream -n alexxapp --timeout=120s
 kubectl wait --for=condition=ready pod -l app=prometheus -n monitoring --timeout=90s
 kubectl wait --for=condition=ready pod -l app=grafana -n monitoring --timeout=90s
@@ -46,7 +46,7 @@ kubectl port-forward service/grafana 3000:3000 -n monitoring &
 sleep 2
 
 
-echo "Grafana & Prometheus running"
+echo "Grafana and Prometheus running"
 
 # pods running
 echo "Showing running pods..."
