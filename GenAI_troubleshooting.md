@@ -4,6 +4,9 @@ Information regarding use of Gen AI (CoPilot) in this project:
 
 
 - switching between minikube and k3s - for k3s the config needs to be reset
+- Problem with average and p95 values, and having incorrect "buckets set up in code"
+- Finding pcap files from local machine, in k3s all worked fine, but in MiniKube needed to be mounted separately with `minikube mount /home/alex/Downloads/pcap:/home/alex/Downloads/pcap` or when starting minikube with flag "--mount --mount-string="/home/alex/Downloads/pcap:/home/alex/Downloads/pcap"
+
 ## Issue 1: Configuring the prometheus and grafana monitoring and connecting to the datasource.
 
 **Problem**: No data showing in panel

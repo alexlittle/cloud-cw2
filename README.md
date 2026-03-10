@@ -27,8 +27,17 @@
 - rebuild-minikube.sh - shell script to rebuild the MiniKube environment from scratch
 - requirements.txt - requirements needed for model training and the xApp
 - start-minikube.sh - shell script to restart minikube and port-forwarding
-- test-minikube.sh - shell script to load test MiniKube deployment
 ```
 
+## Running tests
+
+Start test container: `kubectl apply -f kubernetes/testing.yaml`
+
+Enter test container shell: `kubectl exec -it traffic-gen -n alexxapp -- bash`
+
+Run tcpreplay (eg): `tcpreplay -i eth0 --mbps=100 --loop=0 /pcaps/bigflows.pcap`
 
 
+## Training Data Source
+
+The CIC-IDS2017 (Flow-Based Intrusion Detection Dataset, CIC @UNB Fredericton) dataset used for training the model is not included here, but can be downloaded from https://www.kaggle.com/datasets/dhoogla/cicids2017/data

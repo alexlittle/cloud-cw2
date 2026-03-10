@@ -29,10 +29,10 @@ echo "Building Docker image and loading into k3s containerd..."
 cd xapp
 
 # Build the Docker image
-docker build -t alextlittle/nfstream-ml-app:v4 .
+docker build -t alextlittle/nfstream-ml-app:v5 .
 
 echo "Importing image into k3s..."
-docker save alextlittle/nfstream-ml-app:v4 | sudo k3s ctr images import -
+docker save alextlittle/nfstream-ml-app:v5 | sudo k3s ctr images import -
 
 echo "Deploying app for local development..."
 kubectl apply -f ../kubernetes/xapp-dev.yaml -n alexxapp

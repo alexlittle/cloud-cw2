@@ -105,34 +105,10 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "rate(xapp_inference_latency_ms_sum[1m]) / rate(xapp_inference_latency_ms_count[1m])",
+          "expr": "rate(xapp_inference_latency_ms_sum[5m]) / rate(xapp_inference_latency_ms_count[5m])",
           "legendFormat": "Average",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(xapp_inference_latency_ms_bucket[1m])) by (le))",
-          "instant": false,
-          "legendFormat": "P95 Latency",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum(rate(xapp_inference_latency_ms_bucket[1m])) by (le))",
-          "instant": false,
-          "legendFormat": "P99 Latency",
-          "range": true,
-          "refId": "C"
         }
       ],
       "title": "xApp latency (ms)",
@@ -197,30 +173,6 @@
           "legendFormat": "Average",
           "range": true,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum(rate(xapp_inference_latency_ms_bucket[1m])) by (le))",
-          "instant": false,
-          "legendFormat": "P95",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum(rate(xapp_inference_latency_ms_bucket[1m])) by (le))",
-          "instant": false,
-          "legendFormat": "P99",
-          "range": true,
-          "refId": "C"
         }
       ],
       "title": "Average xApp latency (ms)",
@@ -447,7 +399,7 @@
         "x": 0,
         "y": 8
       },
-      "id": 1,
+      "id": 9,
       "options": {
         "legend": {
           "calcs": [],
@@ -464,18 +416,14 @@
       "pluginVersion": "12.4.1",
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\", container=\"xapp\"}[1m])) by (pod) *100",
-          "legendFormat": "CPU Usage",
+          "expr": "sum(rate(xapp_inference_latency_ms_bucket{le=\"+Inf\"}[5m])) \n- \nsum(rate(xapp_inference_latency_ms_bucket{le=\"10.0\"}[5m]))",
+          "legendFormat": "Requests >10ms/s",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "CPU Usage (%)",
+      "title": "xApp Requests >10ms/s (req/sec)",
       "type": "timeseries"
     },
     {
@@ -511,7 +459,7 @@
         "x": 7,
         "y": 8
       },
-      "id": 7,
+      "id": 10,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -533,13 +481,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\", container=\"xapp\"}[1m])) by (pod)*100",
+          "expr": "sum(rate(xapp_inference_latency_ms_bucket{le=\"+Inf\"}[5m])) \n- \nsum(rate(xapp_inference_latency_ms_bucket{le=\"10.0\"}[5m]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Average CPU Usage (%)",
+      "title": "Average No Requests >10ms per second",
       "type": "stat"
     },
     {
@@ -695,6 +643,168 @@
       ],
       "title": "Average RAM Usage",
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 0,
+        "y": 16
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\", container=\"xapp\"}[1m])) by (pod) *100",
+          "legendFormat": "CPU Usage",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Usage (%)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 5,
+        "x": 7,
+        "y": 16
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"alexxapp\", pod=\"nfstream-pod\", container=\"xapp\"}[1m])) by (pod)*100",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Average CPU Usage (%)",
+      "type": "stat"
     }
   ],
   "preload": false,
@@ -712,6 +822,6 @@
   "timezone": "browser",
   "title": "xApp",
   "uid": "ad5tzpk",
-  "version": 3,
+  "version": 2,
   "weekStart": ""
 }

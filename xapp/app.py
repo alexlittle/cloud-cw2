@@ -5,13 +5,18 @@ import time
 from nfstream import NFStreamer
 from prometheus_client import start_http_server, Gauge, Counter, Histogram
 
+# load the model
 sess = ort.InferenceSession("./rf_model.onnx")
+
+# start NFStreamer to capture network flow
 streamer = NFStreamer(source="any", idle_timeout=1, active_timeout=1)
 
 
 with open("./features.json", "r") as f:
     feature_order = json.load(f)
 
+# extract values for the model inputs from the flow object
+# set to none if not present in the flow object
 def extract_features(flow):
     value_by_name = {
         "protocol": getattr(flow, "protocol", None),
@@ -42,7 +47,7 @@ def extract_features(flow):
 LATENCY = Histogram(
     'xapp_inference_latency_ms',
     'Time taken for prediction in milliseconds',
-    buckets=[0.0001, 0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5,1.0]
+     buckets=[0.01, 0.025, 0.05, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2, 0.25, 0.5, 1.0, 2.5, 5.0, 10, 25, 50, 100, 250, 500, 1000]
 )
 FLOW_COUNT = Counter('xapp_flows_total', 'Total number of flows processed')
 PREDICTION = Gauge('xapp_last_prediction', 'Last prediction value')
@@ -57,6 +62,6 @@ for flow in streamer:
     input_name = sess.get_inputs()[0].name
     output_name = sess.get_outputs()[0].name
     prediction = sess.run([output_name], {input_name: features})
-    LATENCY.observe((time.time() - start_time) * 1000)
+    LATENCY.observe((time.time() - start_time) *1000)
     print("Prediction:", prediction[0][0])
     PREDICTION.set(prediction[0][0])
