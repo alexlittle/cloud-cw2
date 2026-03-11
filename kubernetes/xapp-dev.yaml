@@ -7,13 +7,9 @@ metadata:
     app: nfstream
 spec:
   hostNetwork: true
-  initContainers:
-  - name: hello-world-test
-    image: hello-world # use the Docker provided one
-    command: []
   containers:
   - name: xapp
-    image: alextlittle/nfstream-ml-app:v4
+    image: alextlittle/nfstream-ml-app:v5
     imagePullPolicy: Never
     env:
     - name: PYTHONUNBUFFERED
